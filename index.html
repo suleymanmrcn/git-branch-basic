@@ -3,458 +3,199 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Yeni Başlayanlar İçin Proje Yapısı & Repository Rehberi</title>
-  <meta name="description" content="Açık kaynak, çok kullanıcılı projeler için GitHub repo düzeni, katkı süreci ve gitflow rehberi." />
+  <title>Terminal // Proje Standartları Rehberi</title>
   <style>
     :root {
-      --bg: #ffffff;
-      --fg: #111827;
-      --muted: #6b7280;
-      --border: #e5e7eb;
-      --codebg: #0b1020;
-      --codefg: #e5e7eb;
-      --link: #2563eb;
-      --note: #f9fafb;
-      --max: 980px;
+      --bg: #0a0c10;
+      --card-bg: #111418;
+      --fg: #d1d5db;
+      --accent: #00ff41; /* Matrix Green */
+      --link: #58a6ff;
+      --border: #30363d;
+      --code-bg: #000000;
+      --max: 1100px;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font: 16px/1.55 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font: 15px/1.6 "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       color: var(--fg);
       background: var(--bg);
+      background-image: radial-gradient(#1a1d23 0.5px, transparent 0.5px);
+      background-size: 24px 24px;
     }
     header {
-      border-bottom: 1px solid var(--border);
-      background: #fff;
+      background: rgba(17, 20, 24, 0.95);
+      border-bottom: 2px solid var(--accent);
+      padding: 30px 0;
+      position: sticky; top: 0; z-index: 100;
+      backdrop-filter: blur(5px);
     }
-    .wrap { max-width: var(--max); margin: 0 auto; padding: 18px 18px; }
-    h1 { font-size: 22px; margin: 0 0 6px; }
-    .subtitle { color: var(--muted); margin: 0; }
-    nav {
-      margin-top: 14px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 24px; }
+    h1 { font-size: 26px; color: var(--accent); margin: 0; font-family: monospace; }
+    .subtitle { color: var(--muted); opacity: 0.8; margin-top: 8px; }
+    
+    nav { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 12px; }
     nav a {
-      color: var(--link);
-      text-decoration: none;
-      border: 1px solid var(--border);
-      padding: 6px 10px;
-      border-radius: 8px;
-      background: #fff;
-      font-size: 14px;
+      color: var(--fg); text-decoration: none; border: 1px solid var(--border);
+      padding: 8px 14px; border-radius: 4px; font-size: 13px; font-family: monospace;
+      transition: 0.3s;
     }
-    nav a:hover { text-decoration: underline; }
-    main { padding: 18px 0 40px; }
-    section { padding: 18px 0; border-bottom: 1px solid var(--border); }
-    section:last-child { border-bottom: 0; }
-    h2 { font-size: 18px; margin: 0 0 10px; }
-    h3 { font-size: 15px; margin: 14px 0 6px; }
-    p { margin: 8px 0; }
-    ul { margin: 8px 0 8px 20px; }
-    li { margin: 4px 0; }
-    code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    nav a:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,255,65,0.05); }
+
+    main { padding: 40px 0; }
+    section { margin-bottom: 50px; }
+    h2 { font-size: 22px; color: #fff; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 20px; }
+    h3 { color: var(--accent); font-size: 17px; margin-top: 25px; }
+
+    .grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+    @media (min-width: 850px) { .grid { grid-template-columns: 1fr 1fr; } }
+
+    .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; height: 100%; }
+    .note { background: rgba(88, 166, 255, 0.1); border-left: 4px solid var(--link); padding: 15px; border-radius: 4px; margin: 15px 0; }
+    
     pre {
-      background: var(--codebg);
-      color: var(--codefg);
-      padding: 12px 14px;
-      border-radius: 10px;
-      overflow: auto;
-      margin: 10px 0;
-      font-size: 13px;
+      background: var(--code-bg); border: 1px solid var(--border);
+      padding: 16px; border-radius: 8px; overflow: auto; color: #00ff41; font-size: 13px;
     }
-    .note {
-      background: var(--note);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 14px;
-      margin: 10px 0;
-      color: #111827;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
-    @media (min-width: 860px) {
-      .grid { grid-template-columns: 1fr 1fr; }
-    }
-    .card {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px 14px;
-      background: #fff;
-    }
-    .muted { color: var(--muted); }
-    .kbd {
-      border: 1px solid var(--border);
-      border-bottom-width: 2px;
-      border-radius: 6px;
-      padding: 1px 6px;
-      font-size: 12px;
-      background: #fff;
-    }
-    footer {
-      border-top: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 13px;
-    }
-    .small { font-size: 14px; }
-    .toc-title { font-weight: 600; margin: 0 0 8px; }
-    details summary { cursor: pointer; }
+    code { font-family: "Cascadia Code", Consolas, monospace; }
+    
+    .kbd { background: #333; border-radius: 3px; padding: 2px 5px; font-size: 12px; color: var(--accent); }
+    ul { padding-left: 20px; }
+    li { margin-bottom: 8px; }
+    
+    .status-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; background: var(--border); color: #fff; margin-bottom: 10px; }
+
+    footer { border-top: 1px solid var(--border); padding: 30px 0; text-align: center; color: var(--border); }
   </style>
 </head>
 <body>
+
 <header>
   <div class="wrap">
-    <h1>Yeni Başlayanlar İçin Proje Yapısı & Repository Rehberi</h1>
-    <p class="subtitle">Açık kaynak, çok kullanıcılı projelerde düzenli repo yapısı, katkı süreci ve Gitflow kullanımını hızlıca anlatır.</p>
-
-    <nav aria-label="İçindekiler hızlı erişim">
-      <a href="#org-repo">1) GitHub Org & Repo</a>
-      <a href="#gitignore">2) .gitignore</a>
-      <a href="#readme">3) README.md</a>
-      <a href="#contributing">4) CONTRIBUTING.md</a>
-      <a href="#templates">5) Issue/PR Templates</a>
-      <a href="#gitflow">6) Branch Strategy (Gitflow)</a>
-      <a href="#projects">7) GitHub Projects</a>
-      <a href="#checklist">Hızlı Checklist</a>
+    <h1>> TERMINAL_ONBOARDING_V2</h1>
+    <p class="subtitle">Açık kaynak projeler için profesyonel repository, git ve mimari standartları.</p>
+    <nav>
+      <a href="#gitflow">1. Git & Branching</a>
+      <a href="#structure">2. Project Structure</a>
+      <a href="#contributing">3. Katkı Süreci</a>
+      <a href="#hardware">4. Performans & Optimizasyon</a>
     </nav>
   </div>
 </header>
 
 <main class="wrap">
-  <section class="note">
-    <p><strong>Hedef:</strong> Yeni katılan bir kişi bu dokümanı okuyarak <em>projeyi klonlayıp çalıştırabilsin</em>, <em>branch/PR sürecini doğru uygulasın</em> ve <em>iş takibini (Projects board) anlayabilsin</em>.</p>
-    <p class="muted small">Not: Komutlar örnektir. Projene göre isimleri/versiyonları uyarlayabilirsin.</p>
-  </section>
-
-  <section id="org-repo">
-    <h2>1) GitHub Organization & Repositories</h2>
-
-    <h3>GitHub Organization</h3>
-    <ul>
-      <li>Projelerin tek çatı altında toplanması (repo’lar, takımlar, izinler).</li>
-      <li><strong>Team</strong> bazlı yetkilendirme önerilir (Admin/Maintainer/Contributor vb.).</li>
-      <li>Açık kaynakta; Issues/Discussions/Wiki gibi modüller netleştirilmelidir.</li>
-    </ul>
-
-    <h3>Repository (Repo) İsimlendirme</h3>
-    <ul>
-      <li>Net ve kısa: <code>customer-api</code>, <code>admin-panel</code>, <code>mobile-app</code></li>
-      <li>Monorepo ise: tek repo içinde paketler/servisler klasörlenir.</li>
-    </ul>
-
+  
+  <section id="gitflow">
+    <h2>1) Gitflow & Branching Strategy</h2>
     <div class="grid">
       <div class="card">
-        <h3>Önerilen repo içeriği</h3>
+        <h3>Ana Branch Yapısı</h3>
         <ul>
-          <li><code>README.md</code> — kurulum ve kullanım</li>
-          <li><code>CONTRIBUTING.md</code> — katkı süreci</li>
-          <li><code>LICENSE</code> — açık kaynak lisansı</li>
-          <li><code>CODE_OF_CONDUCT.md</code> — topluluk kuralları</li>
-          <li><code>SECURITY.md</code> — güvenlik bildirim süreci</li>
-          <li><code>.github/</code> — templates, workflows, config</li>
+          <li><strong>main:</strong> Üretim (Production) ortamı. Sadece stabil tag'ler.</li>
+          <li><strong>develop:</strong> Ana entegrasyon hattı. Tüm PR'lar buraya gelir.</li>
+          <li><strong>feature/*:</strong> Yeni özellik geliştirme. (<code>feature/auth-login</code>)</li>
+          <li><strong>fix/*:</strong> Bug düzeltmeleri. (<code>fix/header-mobile</code>)</li>
+          <li><strong>hotfix/*:</strong> Canlıdaki acil yangınları söndürme dalı.</li>
         </ul>
       </div>
-
       <div class="card">
-        <h3>Minimum GitHub ayarları</h3>
-        <ul>
-          <li>Default branch: <code>develop</code> (veya ekip kararına göre <code>main</code>)</li>
-          <li>Branch protection: <code>main</code> (ve çoğu zaman <code>develop</code>)</li>
-          <li>PR zorunluluğu, en az 1 review, status check’ler</li>
-          <li>Issue/PR şablonları</li>
-        </ul>
+        <h3>Commit Mesaj Standartı</h3>
+        <p>Açık kaynakta <i>Conventional Commits</i> zorunludur:</p>
+        <pre><code>feat: add go routine for data sync
+fix: resolve memory leak in react hook
+chore: update docker-compose.yml
+docs: update readme instructions</code></pre>
       </div>
     </div>
-
-    <details class="note">
-      <summary><strong>Komutlar: Repo klonlama & ilk kurulum</strong></summary>
-      <pre><code># Repo klonla
-git clone https://github.com/ORG/REPO.git
-cd REPO
-
-# Remote kontrol
-git remote -v
-
-# Branch listesi
-git branch -a
-</code></pre>
-    </details>
   </section>
 
-  <section id="gitignore">
-    <h2>2) .gitignore Dosyaları</h2>
-    <p><code>.gitignore</code>, repoya <strong>girmemesi gereken</strong> dosyaları listeler. Örn: build çıktıları, IDE ayarları, local config, cache.</p>
+  
 
-    <div class="note">
-      <p><strong>Öneri:</strong> Teknoloji + OS + IDE’yi kapsayan bir <code>.gitignore</code> kullanın.</p>
-      <p class="muted small">Hazır şablonlar: github/gitignore deposu.</p>
-    </div>
-
-    <h3>Tipik örnekler</h3>
-    <ul>
-      <li>.NET: <code>bin/</code>, <code>obj/</code>, <code>*.user</code></li>
-      <li>Node/React: <code>node_modules/</code>, <code>dist/</code>, <code>.next/</code></li>
-      <li>Mac: <code>.DS_Store</code> — Windows: <code>Thumbs.db</code></li>
-      <li>IDE: <code>.idea/</code>, <code>.vscode/</code> (projeye göre)</li>
-    </ul>
-
-    <details class="note">
-      <summary><strong>Komutlar: ignore edilen dosyaları kontrol</strong></summary>
-      <pre><code># .gitignore sonrası takipte kalan dosyaları temizlemek gerekiyorsa:
-git rm -r --cached .
-git add .
-git commit -m "chore: apply gitignore"
-</code></pre>
-      <p class="muted small">Dikkat: Bu komut repodaki dosyaları silmez, sadece git indeksinden çıkarıp kuralları yeniden uygular.</p>
-    </details>
-  </section>
-
-  <section id="readme">
-    <h2>3) README.md (Kurulum & Kullanım Rehberi)</h2>
-    <p>README, repoya giren herkesin <strong>ilk okuyacağı</strong> dosyadır. Yeni başlayan biri “Bu proje nedir ve nasıl çalıştırırım?” sorusuna burada cevap bulmalı.</p>
-
-    <h3>README içeriği (öneri)</h3>
-    <ul>
-      <li>Proje özeti + amaç</li>
-      <li>Teknolojiler & gereksinimler (versiyonlar)</li>
-      <li>Kurulum adımları</li>
-      <li>Çalıştırma (dev/prod)</li>
-      <li>Environment variables (<code>.env.example</code>)</li>
-      <li>Test komutları + lint/format</li>
-      <li>Deployment / Docker (varsa)</li>
-      <li>Linkler: Swagger, dokümanlar, board</li>
-    </ul>
-
-    <details class="note">
-      <summary><strong>Komutlar: Örnek kurulum/çalıştırma blokları</strong></summary>
-      <pre><code># Node / React
-npm ci
-npm run dev
-
-# .NET
-dotnet restore
-dotnet build
-dotnet run --project src/Your.Api
-
-# Test
-npm test
-dotnet test
-
-# Docker (varsa)
-docker compose up -d --build
-</code></pre>
-    </details>
-
-    <div class="note">
-      <p><strong>İpucu:</strong> README’deki komutlar “kopyala-yapıştır” ile çalışmalı. Eksik adım bırakmayın.</p>
+  <section id="structure">
+    <h2>2) Proje Yapısı (Modern Stack)</h2>
+    <div class="grid">
+      <div class="card">
+        <span class="status-badge">Golang</span>
+        <h3>Standard Layout</h3>
+        <pre><code>/cmd/app/main.go   # Entry point
+/internal/        # Private business logic
+/pkg/             # Public helper packages
+/api/             # OpenAPI / Swagger
+/configs/         # Config templates</code></pre>
+      </div>
+      <div class="card">
+        <span class="status-badge">.NET / React</span>
+        <h3>Architecture</h3>
+        <ul>
+          <li><strong>.NET:</strong> <code>src/Project.API</code>, <code>src/Project.Core</code> (Clean Architecture).</li>
+          <li><strong>React:</strong> <code>/src/components</code>, <code>/src/hooks</code>, <code>/src/store</code>.</li>
+          <li><strong>Docker:</strong> Her zaman bir <code>.dockerignore</code> bulundurun.</li>
+        </ul>
+      </div>
     </div>
   </section>
 
   <section id="contributing">
-    <h2>4) CONTRIBUTING.md</h2>
-    <p>CONTRIBUTING, projeye nasıl katkı yapılacağını netleştirir. Çok kullanıcılı (multi-contributor) açık kaynakta <strong>standart</strong>tır.</p>
-
-    <h3>CONTRIBUTING içinde olması önerilenler</h3>
-    <ul>
-      <li>Branch açma kuralları ve isimlendirme</li>
-      <li>Commit mesaj formatı</li>
-      <li>PR süreci: açıklama, test, checklist</li>
-      <li>Code review beklentisi (kim, kaç onay, SLA)</li>
-      <li>Lint/format kuralları</li>
-      <li>Issue açma kuralları</li>
-    </ul>
-
-    <details class="note">
-      <summary><strong>Komutlar: Fork tabanlı katkı akışı (açık kaynak için)</strong></summary>
-      <pre><code># 1) Fork'ladığın repoyu klonla (kendi hesabın)
-git clone https://github.com/SEN/REPO.git
-cd REPO
-
-# 2) Upstream ekle (asıl repo)
-git remote add upstream https://github.com/ORG/REPO.git
-git fetch upstream
-
-# 3) Develop'i güncelle
-git checkout develop
-git pull upstream develop
-
-# 4) Feature branch aç
-git checkout -b feature/short-title
-
-# 5) Değişiklikleri commit et, pushla
-git add .
-git commit -m "feat: add login endpoint"
-git push -u origin feature/short-title
-</code></pre>
-    </details>
-  </section>
-
-  <section id="templates">
-    <h2>5) Issue / Pull Request Template’leri</h2>
-    <p>Template’ler, eksik bilgiyle açılan issue/PR’ları azaltır. Herkes aynı formatta yazar, maintain etmek kolaylaşır.</p>
-
-    <div class="grid">
-      <div class="card">
-        <h3>Issue Template (öneri başlıkları)</h3>
-        <ul>
-          <li>Problem açıklaması</li>
-          <li>Beklenen davranış</li>
-          <li>Mevcut davranış</li>
-          <li>Tekrarlama adımları</li>
-          <li>Log / ekran görüntüsü</li>
-          <li>Ortam bilgisi (OS, sürüm)</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <h3>PR Template (öneri başlıkları)</h3>
-        <ul>
-          <li>Ne değişti?</li>
-          <li>Neden gerekli?</li>
-          <li>Nasıl test edildi?</li>
-          <li>Ekran görüntüsü / çıktı (UI ise)</li>
-          <li>Checklist: test/lint/docs</li>
-        </ul>
-      </div>
-    </div>
-
-    <details class="note">
-      <summary><strong>Dosya konumları (GitHub standardı)</strong></summary>
-      <pre><code>.github/
-  ISSUE_TEMPLATE/
-    bug_report.yml
-    feature_request.yml
-  pull_request_template.md
-</code></pre>
-    </details>
-  </section>
-
-  <section id="gitflow">
-    <h2>6) Branch Strategy (Gitflow)</h2>
-    <p>Gitflow, ekipte paralel geliştirmeyi düzenler. Temel amaç: <strong>ana branch’leri korumak</strong> ve değişiklikleri kontrollü taşımak.</p>
-
-    <div class="grid">
-      <div class="card">
-        <h3>Temel branch’ler</h3>
-        <ul>
-          <li><code>main</code> → Production (canlı)</li>
-          <li><code>develop</code> → Günlük geliştirme</li>
-          <li><code>feature/*</code> → Yeni özellik</li>
-          <li><code>hotfix/*</code> → Canlıdaki acil düzeltme</li>
-          <li><code>release/*</code> (opsiyonel) → sürüm hazırlığı</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <h3>Kurallar (öneri)</h3>
-        <ul>
-          <li><code>main</code>’e doğrudan commit yok → sadece PR</li>
-          <li>PR için CI (test/lint) zorunlu</li>
-          <li>En az 1 review + resolve comments</li>
-          <li>Merge yöntemi: <em>Squash</em> (sıklıkla önerilir) veya ekip standardı</li>
-        </ul>
-      </div>
-    </div>
-
-    <details class="note">
-      <summary><strong>Komutlar: Feature akışı (develop üzerinden)</strong></summary>
-      <pre><code># Develop'i güncelle
-git checkout develop
-git pull origin develop
-
-# Feature branch
-git checkout -b feature/user-login
-
-# Çalış, commit et
-git add .
-git commit -m "feat: add user login flow"
-
-# Push
-git push -u origin feature/user-login
-
-# PR aç: feature/user-login -> develop
-</code></pre>
-    </details>
-
-    <details class="note">
-      <summary><strong>Komutlar: Hotfix akışı (main üzerinden acil düzeltme)</strong></summary>
-      <pre><code># Main'i güncelle
-git checkout main
-git pull origin main
-
-# Hotfix branch
-git checkout -b hotfix/critical-bug
-
-# Fix, commit, push
-git add .
-git commit -m "fix: prevent null reference on startup"
-git push -u origin hotfix/critical-bug
-
-# PR aç: hotfix -> main (sonra main'den develop'a geri merge/cherry-pick)
-</code></pre>
-    </details>
-  </section>
-
-  <section id="projects">
-    <h2>7) GitHub Projects Board</h2>
-    <p>İş takibini görsel ve ortak bir yerde tutar. Yeni başlayan biri “şu an ne üzerinde çalışılıyor?” sorusuna board’dan bakabilmeli.</p>
-
-    <h3>Önerilen kolonlar</h3>
-    <ul>
-      <li><strong>Backlog</strong> → yapılacaklar</li>
-      <li><strong>In Progress</strong> → üzerinde çalışılanlar</li>
-      <li><strong>Review</strong> → code review bekleyenler</li>
-      <li><strong>Done</strong> → tamamlananlar</li>
-    </ul>
-
+    <h2>3) CONTRIBUTING.md (Katkı Süreci)</h2>
     <div class="note">
-      <p><strong>Öneri:</strong> Issue’ları board’a bağlayın ve PR’ları Issue’lara linkleyin. Böylece ilerleme izlenebilir olur.</p>
-      <p class="muted small">Kısa not: PR açıklamasında “Fixes #123” gibi ifadeler issue’yu otomatik kapatmaya yardımcı olabilir (repo ayarlarına bağlı).</p>
+      <strong>Önemli:</strong> Yeni biri projeye geldiğinde şu adımları izlemelidir:
+    </div>
+    <div class="card">
+      <ol>
+        <li>Projeyi <strong>Fork</strong> et ve lokalde <code>git clone</code> yap.</li>
+        <li>Mutlaka bir <strong>Issue</strong> aç veya var olan bir issue'yu üzerine al.</li>
+        <li><code>develop</code> branch'inden yeni bir feature branch aç.</li>
+        <li>Kodunu yaz, <strong>Lint</strong> ve <strong>Test</strong> komutlarını çalıştır.</li>
+        <li>PR (Pull Request) açarken şablondaki soruların hepsini yanıtla.</li>
+      </ol>
+    </div>
+  </section>
+
+  <section id="hardware">
+    <h2>4) Donanım & Performans (Low-Spec Dev)</h2>
+    <p>Geliştirme yaparken donanım kısıtlarını aşmak için bu kurallara uyuyoruz:</p>
+    <div class="grid">
+      <div class="card" style="border-left: 4px solid var(--accent);">
+        <h3>Docker Kullanımı</h3>
+        <p>Eğer RAM < 16GB ise:</p>
+        <ul>
+          <li>Veritabanı (Postgres/Redis) Docker'da çalışsın.</li>
+          <li>Uygulamanın kendisini (Go/Dotnet) <strong>native</strong> (lokal) çalıştır.</li>
+          <li><code>docker-compose down --volumes</code> ile kullanılmayan cache'leri temizle.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>IDE Optimizasyonu</h3>
+        <ul>
+          <li>VS Code kullanıyorsan gereksiz eklentileri kapat.</li>
+          <li>Go için <code>gopls</code> bellek kullanımını takip et.</li>
+          <li>Tarayıcıda çok fazla sekme yerine Terminal üzerinden log takibi yap.</li>
+        </ul>
+      </div>
     </div>
   </section>
 
   <section id="checklist">
-    <h2>Hızlı Checklist (Yeni Katılan İçin)</h2>
+    <h2>Hızlı Başlangıç Komutları</h2>
+    <pre><code># Bağımlılıkları Kur
+go mod download          # Go
+dotnet restore           # .NET
+npm install --prefers-offline  # React (Hızlı kurulum)
 
-    <div class="card">
-      <ol>
-        <li>Repo’yu klonla: <span class="kbd">git clone</span></li>
-        <li>Gereksinimleri kur: Node/.NET/Docker vb.</li>
-        <li>README adımlarını uygula: <span class="kbd">npm ci</span> / <span class="kbd">dotnet restore</span></li>
-        <li>Projeyi çalıştır: <span class="kbd">npm run dev</span> / <span class="kbd">dotnet run</span></li>
-        <li>Board’a bak: aktif iş var mı?</li>
-        <li>Yeni iş için branch aç: <code>feature/...</code></li>
-        <li>PR aç, template’e göre doldur, review iste</li>
-      </ol>
-    </div>
-
-    <details class="note">
-      <summary><strong>Komutlar: Günlük rutin (sync + temizlik)</strong></summary>
-      <pre><code># Upstream/develop güncelle
-git checkout develop
-git pull origin develop
-
-# Lokal branch’leri kontrol et
-git branch
-
-# Uzak branch’leri güncelle
-git fetch --all --prune
-
-# Rebase yerine merge politikası ekibinize göre değişebilir
-</code></pre>
-    </details>
+# Çalıştır (Native)
+go run cmd/app/main.go
+dotnet run --project src/API
+npm start</code></pre>
   </section>
+
 </main>
 
 <footer>
   <div class="wrap">
-    <p>Bu sayfa ekip içi onboarding ve açık kaynak katkı sürecini standartlaştırmak için hazırlanmıştır.</p>
+    <p>> 2026 // STANDARDIZED REPOSITORY SYSTEM // ENCRYPTED AND OPTIMIZED</p>
   </div>
 </footer>
+
 </body>
 </html>
